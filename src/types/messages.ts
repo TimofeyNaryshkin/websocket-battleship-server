@@ -1,4 +1,4 @@
-import type { AttackStatus } from "./enums.js";
+import type { AttackStatus, ServerResponseType } from "./enums.js";
 import type { Ship, UpdateRoomData } from "./models.js";
 
 //Player
@@ -167,3 +167,9 @@ export type ServerMessage =
   | TurnResponse
   | FinishResponse
   | StartGameResponse;
+
+export interface ServerMessageStr {
+  type: ServerResponseType;
+  data: string;
+  id: 0;
+}

@@ -10,3 +10,13 @@ export enum ShipSize {
   Large = "large",
   Huge = "huge",
 }
+
+export type ServerResponseType =
+  | "create_game"
+  | "update_room"
+  | "reg"
+  | "update_winners"
+  | "attack"
+  | "turn"
+  | "finish"
+  | "start_game";

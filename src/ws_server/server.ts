@@ -1,6 +1,7 @@
 import { WebSocketServer } from "ws";
 import { messageHandler } from "../handlers/messageHandler.js";
 import { isClientMessage } from "../utils/typeGuards.js";
+import { connectionManager } from "../services/connectionManager.js";
 
 export const startWSS = (port: number) => {
   const wss = new WebSocketServer({ port });
@@ -15,11 +16,16 @@ export const startWSS = (port: number) => {
           return
         }
 
-        messageHandler(parsedData);
+        messageHandler(ws, parsedData);
       } catch (error) {
         console.error("Invalid message:", error);
       }
     });
+
+    ws.on('close', () => {
+      connectionManager.removeConnection(ws)
+      console.log('Client disconnected')
+    })
 
   });
 

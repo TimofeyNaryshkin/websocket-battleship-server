@@ -19,3 +19,10 @@ export interface Ship {
   length: number;
   type: ShipSize;
 }
+
+export interface Player {
+  name: string;
+  password: string;
+  index: number;
+  wins: number;
+}

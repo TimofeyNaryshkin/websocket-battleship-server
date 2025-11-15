@@ -1,0 +1,33 @@
+import type { WebSocket } from "ws";
+import type {
+  RegRequest,
+  RegResponse,
+  ServerMessageStr,
+} from "../types/messages.js";
+import { playerService } from "../services/playerService.js";
+import { connectionManager } from "../services/connectionManager.js";
+
+export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
+  const { name, password } = message.data;
+  const player = playerService.register(name, password);
+
+  connectionManager.addConnection(ws, player.index);
+
+  const responseMessage: RegResponse = {
+    type: "reg",
+    data: {
+      name: player.name,
+      index: player.index,
+      error: false,
+      errorText: "",
+    },
+    id: 0,
+  };
+
+  const responseMessageStr: ServerMessageStr = {
+    ...responseMessage,
+    data: JSON.stringify(responseMessage.data),
+  };
+
+  connectionManager.sendToPlayer(player.index, responseMessageStr);
+};
