@@ -1,10 +1,27 @@
 import { WebSocketServer } from "ws";
+import { messageHandler } from "../handlers/messageHandler.js";
+import { isClientMessage } from "../utils/typeGuards.js";
 
-const port = 3000;
-const wss = new WebSocketServer({ port });
+export const startWSS = (port: number) => {
+  const wss = new WebSocketServer({ port });
 
-console.log(wss)
+  wss.on("connection", (ws) => {
+    ws.on("message", (data) => {
+      try {
+        const parsedData: unknown = JSON.parse(data.toString());
 
-wss.on('connection', (ws) => {
-  ws.on('message', (data) => {})
-})
+        if (!isClientMessage(parsedData)) {
+          console.error("Invalid message format:", parsedData);
+          return
+        }
+
+        messageHandler(parsedData);
+      } catch (error) {
+        console.error("Invalid message:", error);
+      }
+    });
+
+  });
+
+  return wss;
+};
