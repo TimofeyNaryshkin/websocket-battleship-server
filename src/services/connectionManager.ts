@@ -1,5 +1,5 @@
 import type { WebSocket } from "ws";
-import type { ServerMessage, ServerMessageStr } from "../types/messages.js";
+import type { ServerMessage, StringifiedDataMessage } from "../types/messages.js";
 
 class ConnectionManager {
   private connections = new Map<WebSocket, number>();
@@ -26,18 +26,18 @@ class ConnectionManager {
     return this.players.get(playerId);
   }
 
-  sendToPlayer(playerId: number, message: ServerMessageStr) {
+  sendToPlayer(playerId: number, message: StringifiedDataMessage) {
     const ws = this.players.get(playerId);
     if (ws && ws.readyState === ws.OPEN) {
       ws.send(JSON.stringify(message));
     }
   }
 
-  sendToRoom(playerIds: [number, number], message: ServerMessageStr) {
+  sendToRoom(playerIds: [number, number], message: StringifiedDataMessage) {
     playerIds.forEach((id) => this.sendToPlayer(id, message));
   }
 
-  broadcast(message: ServerMessageStr) {
+  broadcast(message: StringifiedDataMessage) {
     this.players.forEach((ws) => {
       if (ws.readyState === ws.OPEN) {
         ws.send(JSON.stringify(message));

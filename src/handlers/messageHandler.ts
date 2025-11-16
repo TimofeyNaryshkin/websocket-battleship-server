@@ -1,7 +1,7 @@
 import type { WebSocket } from "ws";
 import type { ClientMessage } from "../types/messages.js";
 import { handlePlayerReg } from "./playerHandler.js";
-import { handleCreateRoom } from "./roomHander.js";
+import { handleAddUserToRoom, handleCreateRoom } from "./roomHander.js";
 
 export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
   switch (message.type) {
@@ -9,8 +9,10 @@ export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
       handlePlayerReg(ws, message);
       break;
     case "create_room":
-      handleCreateRoom(ws, message);
+      handleCreateRoom(ws);
       break;
+    case 'add_user_to_room':
+      handleAddUserToRoom(ws, message)
     default:
       break;
   }
