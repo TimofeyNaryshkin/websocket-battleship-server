@@ -3,10 +3,11 @@ import type {
   AddShipsRequest,
   StartGameResponse,
   StringifiedDataMessage,
+  TurnResponse,
 } from "../types/messages.js";
 import { gameService } from "../services/gameService.js";
 import { connectionManager } from "../services/connectionManager.js";
-import { roomService } from "../services/roomService.js";
+import { stringifyData } from "../utils/stringifyData.js";
 
 export const handleAddShips = (ws: WebSocket, message: AddShipsRequest) => {
   const { gameId, ships, indexPlayer } = message.data;
@@ -20,7 +21,7 @@ export const handleAddShips = (ws: WebSocket, message: AddShipsRequest) => {
     game.playerIds.forEach((pId) => {
       const ships = game.ships.get(pId);
       if (!ships) return;
-      const responseMessage: StartGameResponse = {
+      const startGameMessage: StartGameResponse = {
         type: "start_game",
         data: {
           ships,
@@ -28,11 +29,19 @@ export const handleAddShips = (ws: WebSocket, message: AddShipsRequest) => {
         },
         id: 0,
       };
-      const responseMessageStr: StringifiedDataMessage = {
-        ...responseMessage,
-        data: JSON.stringify(responseMessage.data),
+      const startGameMessageStr = stringifyData(startGameMessage);
+
+      const turnMessage: TurnResponse = {
+        type: "turn",
+        data: {
+          currentPlayer: game.currentTurn,
+        },
+        id: 0,
       };
-      connectionManager.sendToPlayer(pId, responseMessageStr);
+      const turnMessageStr = stringifyData(turnMessage);
+
+      connectionManager.sendToPlayer(pId, startGameMessageStr);
+      connectionManager.sendToPlayer(pId, turnMessageStr);
     });
   }
 };

@@ -7,6 +7,7 @@ import type {
 import { playerService } from "../services/playerService.js";
 import { connectionManager } from "../services/connectionManager.js";
 import { roomService } from "../services/roomService.js";
+import { stringifyData } from "../utils/stringifyData.js";
 
 export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
   const { name, password } = message.data;
@@ -25,10 +26,7 @@ export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
     id: 0,
   };
 
-  const responseMessageStr: StringifiedDataMessage = {
-    ...responseMessage,
-    data: JSON.stringify(responseMessage.data),
-  };
+  const responseMessageStr = stringifyData(responseMessage)
 
   connectionManager.sendToPlayer(player.index, responseMessageStr);
 

@@ -32,4 +32,5 @@ export interface Game {
   playerIds: [number, number];
   ships: Map<number, Ship[]>;
   shipsReady: Set<number>
+  currentTurn: number
 }

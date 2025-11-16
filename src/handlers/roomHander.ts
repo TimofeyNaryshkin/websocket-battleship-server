@@ -9,6 +9,7 @@ import type {
 } from "../types/messages.js";
 import { playerService } from "../services/playerService.js";
 import { gameService } from "../services/gameService.js";
+import { stringifyData } from "../utils/stringifyData.js";
 
 export const handleCreateRoom = (ws: WebSocket) => {
   const playerId = connectionManager.getPlayerId(ws);
@@ -62,10 +63,8 @@ export const handleAddUserToRoom = (
         },
         id: 0,
       };
-      const responseMessageStr: StringifiedDataMessage = {
-        ...responseMessage,
-        data: JSON.stringify(responseMessage.data),
-      };
+
+      const responseMessageStr = stringifyData(responseMessage);
       connectionManager.sendToPlayer(+u.index, responseMessageStr);
     });
   }

@@ -10,6 +10,7 @@ class GameService {
       playerIds,
       ships: new Map(),
       shipsReady: new Set(),
+      currentTurn: playerIds[0],
     };
 
     this.games.set(newGame.gameId, newGame);
