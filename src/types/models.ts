@@ -30,4 +30,6 @@ export interface Player {
 export interface Game {
   gameId: number;
   playerIds: [number, number];
+  ships: Map<number, Ship[]>;
+  shipsReady: Set<number>
 }

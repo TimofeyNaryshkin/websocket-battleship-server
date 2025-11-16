@@ -29,6 +29,7 @@ class ConnectionManager {
   sendToPlayer(playerId: number, message: StringifiedDataMessage) {
     const ws = this.players.get(playerId);
     if (ws && ws.readyState === ws.OPEN) {
+      console.log(JSON.stringify(message))
       ws.send(JSON.stringify(message));
     }
   }
