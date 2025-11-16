@@ -12,6 +12,7 @@ import { connectionManager } from "../services/connectionManager.js";
 import { stringifyData } from "../utils/stringifyData.js";
 import { playerService } from "../services/playerService.js";
 import { AttackStatus } from "../types/enums.js";
+import { console } from "inspector";
 
 export const handleAddShips = (ws: WebSocket, message: AddShipsRequest) => {
   const { gameId, ships, indexPlayer } = message.data;
@@ -71,8 +72,26 @@ export const handleAttack = (ws: WebSocket, message: AttackRequest) => {
   const attackMessageStr = stringifyData(attackMessage);
   connectionManager.sendToRoom(game.playerIds, attackMessageStr);
 
-  if (result.status === AttackStatus.Killed && result.killedShip) {
+  if (
+    result.status === AttackStatus.Killed &&
+    result.killedShip &&
+    result.surroundingCells
+  ) {
+    result.surroundingCells.forEach((cell) => {
+      if (!cell) return;
+      const attackMessage: AttackResponse = {
+        type: "attack",
+        data: {
+          position: cell,
+          currentPlayer: playerId,
+          status: AttackStatus.Miss,
+        },
+        id: 0,
+      };
+      const attackMessageStr = stringifyData(attackMessage);
 
+      connectionManager.sendToRoom(game.playerIds, attackMessageStr);
+    });
   }
 
   const turnMessage: TurnResponse = {

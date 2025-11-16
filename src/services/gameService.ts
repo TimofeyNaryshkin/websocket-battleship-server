@@ -99,6 +99,7 @@ class GameService {
         status: AttackStatus.Killed,
         nextTurn: playerId,
         killedShip: hitShip,
+        surroundingCells
       };
     }
 
