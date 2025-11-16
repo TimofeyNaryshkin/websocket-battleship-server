@@ -26,3 +26,8 @@ export interface Player {
   index: number;
   wins: number;
 }
+
+export interface Room {
+  roomId: number;
+  playerIds: number[];
+}

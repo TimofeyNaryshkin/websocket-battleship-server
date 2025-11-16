@@ -5,7 +5,7 @@ import { handlePlayerReg } from "./playerHandler.js";
 export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
   switch (message.type) {
     case "reg":
-      handlePlayerReg(ws, message)
+      handlePlayerReg(ws, message);
       break;
 
     default:

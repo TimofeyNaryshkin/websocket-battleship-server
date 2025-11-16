@@ -6,6 +6,7 @@ import type {
 } from "../types/messages.js";
 import { playerService } from "../services/playerService.js";
 import { connectionManager } from "../services/connectionManager.js";
+import { roomService } from "../services/roomService.js";
 
 export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
   const { name, password } = message.data;
@@ -30,4 +31,16 @@ export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
   };
 
   connectionManager.sendToPlayer(player.index, responseMessageStr);
+
+  connectionManager.broadcast({
+    type: "update_room",
+    data: JSON.stringify(roomService.getAvailableRooms()),
+    id: 0,
+  });
+
+  connectionManager.broadcast({
+    type: "update_winners",
+    data: JSON.stringify(playerService.getWinners()),
+    id: 0,
+  });
 };

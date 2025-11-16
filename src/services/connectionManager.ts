@@ -37,7 +37,7 @@ class ConnectionManager {
     playerIds.forEach((id) => this.sendToPlayer(id, message));
   }
 
-  broadcast(message: ServerMessage) {
+  broadcast(message: ServerMessageStr) {
     this.players.forEach((ws) => {
       if (ws.readyState === ws.OPEN) {
         ws.send(JSON.stringify(message));
