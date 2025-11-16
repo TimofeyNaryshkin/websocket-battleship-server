@@ -4,6 +4,7 @@ import type {
   AttackRequest,
   AttackResponse,
   FinishResponse,
+  RandomAttackRequest,
   StartGameResponse,
   TurnResponse,
 } from "../types/messages.js";
@@ -90,6 +91,86 @@ export const handleAttack = (ws: WebSocket, message: AttackRequest) => {
       };
       const attackMessageStr = stringifyData(attackMessage);
 
+      connectionManager.sendToRoom(game.playerIds, attackMessageStr);
+    });
+  }
+
+  const turnMessage: TurnResponse = {
+    type: "turn",
+    data: {
+      currentPlayer: result.nextTurn,
+    },
+    id: 0,
+  };
+  const turnMessageStr = stringifyData(turnMessage);
+  connectionManager.sendToRoom(game.playerIds, turnMessageStr);
+
+  if (result.winner) {
+    const winMessage: FinishResponse = {
+      type: "finish",
+      data: {
+        winPlayer: result.winner,
+      },
+      id: 0,
+    };
+    const winMessageStr = stringifyData(winMessage);
+    connectionManager.sendToRoom(game.playerIds, winMessageStr);
+
+    playerService.addWin(result.winner);
+
+    connectionManager.broadcast({
+      type: "update_winners",
+      data: JSON.stringify(playerService.getWinners()),
+      id: 0,
+    });
+  }
+};
+
+export const handleRandomAttack = (
+  ws: WebSocket,
+  message: RandomAttackRequest
+) => {
+  const { gameId } = message.data;
+  const playerId = connectionManager.getPlayerId(ws);
+  const game = gameService.getGame(+gameId);
+  if (!playerId || !game) return;
+
+  const result = gameService.randomAttack(+gameId, playerId);
+  if (!result) return;
+
+  console.log(
+    `Random attack by player ${playerId} at (${result.x}, ${result.y}): ${result.status}`
+  );
+
+  const attackMessage: AttackResponse = {
+    type: "attack",
+    data: {
+      position: { x: result.x, y: result.y },
+      currentPlayer: playerId,
+      status: result.status,
+    },
+    id: 0,
+  };
+  const attackMessageStr = stringifyData(attackMessage);
+  connectionManager.sendToRoom(game.playerIds, attackMessageStr);
+
+  if (
+    result.status === AttackStatus.Killed &&
+    result.killedShip &&
+    result.surroundingCells
+  ) {
+    result.surroundingCells.forEach((cell) => {
+      if (!cell) return;
+      const attackMessage: AttackResponse = {
+        type: "attack",
+        data: {
+          position: cell,
+          currentPlayer: playerId,
+          status: AttackStatus.Miss,
+        },
+        id: 0,
+      };
+      const attackMessageStr = stringifyData(attackMessage);
       connectionManager.sendToRoom(game.playerIds, attackMessageStr);
     });
   }

@@ -27,7 +27,7 @@ class GameService {
     game.ships.set(playerId, ships);
     game.shipsReady.add(playerId);
 
-    game.boards.set(playerId, this.createEmptyBoard())
+    game.boards.set(playerId, this.createEmptyBoard());
   }
 
   areBothPlayersReady(gameId: number) {
@@ -99,7 +99,7 @@ class GameService {
         status: AttackStatus.Killed,
         nextTurn: playerId,
         killedShip: hitShip,
-        surroundingCells
+        surroundingCells,
       };
     }
 
@@ -107,6 +107,40 @@ class GameService {
       status: AttackStatus.Shot,
       nextTurn: playerId,
     };
+  }
+
+  randomAttack(gameId: number, playerId: number) {
+    const game = this.games.get(gameId);
+    if (!game) return;
+    if (game.currentTurn !== playerId) return;
+
+    const enemyId = game.playerIds.find((pId) => pId !== playerId);
+    if (!enemyId) return;
+    const enemyBoard = game.boards.get(enemyId);
+    if (!enemyBoard) return;
+
+    const emptyCells: Coordinates[] = [];
+    for (let y = 0; y < 10; y++) {
+      for (let x = 0; x < 10; x++) {
+        if (enemyBoard[y]?.[x] === "empty") {
+          emptyCells.push({ x, y });
+        }
+      }
+    }
+
+    if (emptyCells.length === 0) {
+      console.error("No empty cells available");
+    }
+
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    if (!emptyCells[randomIndex]) return;
+    const { x, y } = emptyCells[randomIndex];
+
+    const result = this.attack(gameId, x, y, playerId);
+
+    if (!result) return
+
+    return { ...result, x, y };
   }
 
   private getShipCells(ship: Ship) {
@@ -156,7 +190,7 @@ class GameService {
           const nx = cell.x + dx;
           const ny = cell.y + dy;
 
-          if (nx > 0 && nx < 10 && ny > 0 && ny < 10) {
+          if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
             const isShipCell = cells.some((sc) => sc.x === nx && sc.y === ny);
             if (!isShipCell) {
               surrounding.add(`${nx},${ny}`);
