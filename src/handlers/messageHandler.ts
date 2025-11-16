@@ -2,7 +2,7 @@ import type { WebSocket } from "ws";
 import type { ClientMessage } from "../types/messages.js";
 import { handlePlayerReg } from "./playerHandler.js";
 import { handleAddUserToRoom, handleCreateRoom } from "./roomHander.js";
-import { handleAddShips } from "./gameHandler.js";
+import { handleAddShips, handleAttack } from "./gameHandler.js";
 
 export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
   switch (message.type) {
@@ -18,7 +18,9 @@ export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
     case 'add_ships':
       handleAddShips(ws, message);
       break;
-
+    case 'attack': 
+      handleAttack(ws, message);
+      break
     default:
       break;
   }

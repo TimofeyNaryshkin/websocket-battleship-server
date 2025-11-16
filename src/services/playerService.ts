@@ -24,7 +24,6 @@ class PlayerService {
     this.players.set(newPlayer.index, newPlayer);
     this.playersByName.set(name, newPlayer);
 
-    console.log("new player:", JSON.stringify(newPlayer));
     return newPlayer;
   }
 

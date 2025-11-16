@@ -1,4 +1,4 @@
-import type { ShipSize } from "./enums.js";
+import type { Board, ShipSize } from "./enums.js";
 
 export interface RoomUser {
   name: string;
@@ -31,6 +31,12 @@ export interface Game {
   gameId: number;
   playerIds: [number, number];
   ships: Map<number, Ship[]>;
-  shipsReady: Set<number>
-  currentTurn: number
+  boards: Map<number, Board>;
+  shipsReady: Set<number>;
+  currentTurn: number;
+}
+
+export interface Coordinates {
+  x: number;
+  y: number;
 }

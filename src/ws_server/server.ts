@@ -17,7 +17,7 @@ export const startWSS = (port: number) => {
           console.error("Invalid data format:", parsedRequest);
           return;
         }
-        console.log(parsedRequest);
+        console.log('request:', parsedRequest);
         const parsedData: unknown = parsedRequest.data.length
           ? {
               ...parsedRequest,

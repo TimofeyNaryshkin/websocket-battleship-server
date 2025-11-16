@@ -28,3 +28,6 @@ export type ClientRequestType =
   | "add_ships"
   | "attack"
   | "randomAttack";
+
+export type CellState = 'empty' | 'ship' | 'hit' | 'miss';
+export type Board = CellState[][]

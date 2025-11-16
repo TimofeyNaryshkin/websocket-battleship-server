@@ -25,14 +25,6 @@ class RoomService {
   }
 
   getAvailableRooms() {
-    console.log(
-      JSON.stringify(
-        this.rooms
-          .values()
-          .toArray()
-          .filter((r) => r.roomUsers.length === 1)
-      )
-    );
     return this.rooms
       .values()
       .toArray()
