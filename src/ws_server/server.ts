@@ -1,6 +1,9 @@
 import { WebSocketServer } from "ws";
 import { messageHandler } from "../handlers/messageHandler.js";
-import { isClientMessage } from "../utils/typeGuards.js";
+import {
+  isClientMessage,
+  isStringifiedDataMessage,
+} from "../utils/typeGuards.js";
 import { connectionManager } from "../services/connectionManager.js";
 
 export const startWSS = (port: number) => {
@@ -9,11 +12,21 @@ export const startWSS = (port: number) => {
   wss.on("connection", (ws) => {
     ws.on("message", (data) => {
       try {
-        const parsedData: unknown = JSON.parse(data.toString());
-
+        const parsedRequest: unknown = JSON.parse(data.toString());
+        if (!isStringifiedDataMessage(parsedRequest)) {
+          console.error("Invalid data format:", parsedRequest);
+          return;
+        }
+        console.log(parsedRequest);
+        const parsedData: unknown = parsedRequest.data.length
+          ? {
+              ...parsedRequest,
+              data: JSON.parse(parsedRequest.data),
+            }
+          : parsedRequest;
         if (!isClientMessage(parsedData)) {
           console.error("Invalid message format:", parsedData);
-          return
+          return;
         }
 
         messageHandler(ws, parsedData);
@@ -22,11 +35,10 @@ export const startWSS = (port: number) => {
       }
     });
 
-    ws.on('close', () => {
-      connectionManager.removeConnection(ws)
-      console.log('Client disconnected')
-    })
-
+    ws.on("close", () => {
+      connectionManager.removeConnection(ws);
+      console.log("Client disconnected");
+    });
   });
 
   return wss;

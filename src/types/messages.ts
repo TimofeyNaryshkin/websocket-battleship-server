@@ -1,5 +1,5 @@
-import type { AttackStatus, ServerResponseType } from "./enums.js";
-import type { Ship, UpdateRoomData } from "./models.js";
+import type { AttackStatus, ClientRequestType, ServerResponseType } from "./enums.js";
+import type { RoomData, Ship } from "./models.js";
 
 //Player
 export interface RegRequest {
@@ -61,7 +61,7 @@ export interface CreateGameResponse {
 
 export interface UpdateRoomResponse {
   type: "update_room";
-  data: UpdateRoomData[];
+  data: RoomData[];
   id: 0;
 }
 
@@ -168,8 +168,9 @@ export type ServerMessage =
   | FinishResponse
   | StartGameResponse;
 
-export interface ServerMessageStr {
-  type: ServerResponseType;
+export interface StringifiedDataMessage {
+  type: ServerResponseType | ClientRequestType;
   data: string;
   id: 0;
 }
+

@@ -20,3 +20,11 @@ export type ServerResponseType =
   | "turn"
   | "finish"
   | "start_game";
+
+export type ClientRequestType =
+  | "create_room"
+  | "add_user_to_room"
+  | "reg"
+  | "add_ships"
+  | "attack"
+  | "randomAttack";

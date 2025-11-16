@@ -1,25 +1,39 @@
-import type { Room } from "../types/models.js";
+import type { RoomData, RoomUser } from "../types/models.js";
+import { playerService } from "./playerService.js";
 
 class RoomService {
-  private rooms = new Map<number, Room>();
+  private rooms = new Map<number, RoomData>();
   private nextRoomId = 1;
 
   createRoom(playerId: number) {
-    const newRoom: Room = {
-      roomId: this.nextRoomId++,
-      playerIds: [playerId],
+    const player = playerService.getPlayer(playerId);
+    if (!player) return;
+
+    const roomUser: RoomUser = {
+      name: player.name,
+      index: player.index,
     };
 
-    this.rooms.set(newRoom.roomId, newRoom);
+    const newRoom: RoomData = {
+      roomId: this.nextRoomId++,
+      roomUsers: [roomUser],
+    };
+
+    this.rooms.set(+newRoom.roomId, newRoom);
+
     return newRoom;
   }
 
   getAvailableRooms() {
+    console.log(JSON.stringify(this.rooms
+      .values()
+      .toArray()
+      .filter((r) => r.roomUsers.length === 1)))
     return this.rooms
       .values()
       .toArray()
-      .filter((r) => r.playerIds.length === 1);
+      .filter((r) => r.roomUsers.length === 1);
   }
 }
 
-export const roomService = new RoomService()
+export const roomService = new RoomService();

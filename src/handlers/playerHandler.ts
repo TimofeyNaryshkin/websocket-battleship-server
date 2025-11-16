@@ -2,7 +2,7 @@ import type { WebSocket } from "ws";
 import type {
   RegRequest,
   RegResponse,
-  ServerMessageStr,
+  StringifiedDataMessage,
 } from "../types/messages.js";
 import { playerService } from "../services/playerService.js";
 import { connectionManager } from "../services/connectionManager.js";
@@ -25,7 +25,7 @@ export const handlePlayerReg = (ws: WebSocket, message: RegRequest) => {
     id: 0,
   };
 
-  const responseMessageStr: ServerMessageStr = {
+  const responseMessageStr: StringifiedDataMessage = {
     ...responseMessage,
     data: JSON.stringify(responseMessage.data),
   };

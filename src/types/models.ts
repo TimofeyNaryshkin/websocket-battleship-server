@@ -5,7 +5,7 @@ export interface RoomUser {
   index: number | string;
 }
 
-export interface UpdateRoomData {
+export interface RoomData {
   roomId: number | string;
   roomUsers: RoomUser[];
 }
@@ -25,9 +25,4 @@ export interface Player {
   password: string;
   index: number;
   wins: number;
-}
-
-export interface Room {
-  roomId: number;
-  playerIds: number[];
 }
