@@ -12,24 +12,24 @@ export const messageHandler = (ws: WebSocket, message: ClientMessage) => {
   switch (message.type) {
     case "reg":
       handlePlayerReg(ws, message);
-      break;
+      return `Player registration processed`;
     case "create_room":
       handleCreateRoom(ws);
-      break;
+      return `Room created`;
     case "add_user_to_room":
       handleAddUserToRoom(ws, message);
-      break;
+      return `Player added to room`;
     case "add_ships":
       handleAddShips(ws, message);
-      break;
+      return `Ships added to game`;
     case "attack":
       handleAttack(ws, message);
-      break;
+      return `Attack processed`;
     case "randomAttack":
       handleRandomAttack(ws, message);
-      break;
+      return `Random attack processed`;
     default:
-      console.error("Unknown message type:", (message as ClientMessage).type);
+      console.error("[ERROR] Unknown message type:", (message as ClientMessage).type);
       break;
   }
 };
